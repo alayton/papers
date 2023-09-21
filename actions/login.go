@@ -16,13 +16,13 @@ type LoginFields struct {
 
 type LoginResult struct {
 	NeedsTOTP    bool
+	Remember     bool
 	User         papers.User
-	LoginToken   *papers.LoginToken
 	AccessToken  *papers.AccessToken
 	RefreshToken *papers.RefreshToken
 }
 
-// Attempts to authenticate a user with the given email and password. Caller is responsible for generating access and refresh tokens for the returned User
+// Attempts to authenticate a user with the given email and password. Caller is responsible for sending access and refresh tokens to the client
 func Login(ctx context.Context, p *papers.Papers, fields LoginFields) (*LoginResult, error) {
 	user, err := p.Config.Storage.Users.GetUserByEmail(ctx, fields.Email)
 	if err == papers.ErrUserNotFound {
@@ -48,7 +48,7 @@ func Login(ctx context.Context, p *papers.Papers, fields LoginFields) (*LoginRes
 	}
 
 	if p.UserHasTOTP(user) {
-		return &LoginResult{NeedsTOTP: true, LoginToken: p.NewLoginToken(ctx, user.GetID(), fields.Remember)}, nil
+		return &LoginResult{NeedsTOTP: true, User: user, Remember: fields.Remember}, nil
 	}
 
 	user.SetLastLogin(time.Now())

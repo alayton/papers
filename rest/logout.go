@@ -16,19 +16,19 @@ func Logout(p *papers.Papers) http.HandlerFunc {
 		}
 
 		var accessToken *papers.AccessToken
-		if err := p.Config.Storage.Client.Read(p.Config.AccessCookieName, r, &accessToken); err != nil {
+		if err := p.Config.Storage.Cookies.Read(p.Config.AccessCookieName, r, &accessToken); err != nil {
 			p.Logger.Print("Error getting access token during logout:", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		var refreshToken *papers.RefreshToken
-		if err := p.Config.Storage.Client.Read(p.Config.RefreshCookieName, r, &refreshToken); err != nil && err != papers.ErrCookieNotFound {
+		if err := p.Config.Storage.Cookies.Read(p.Config.RefreshCookieName, r, &refreshToken); err != nil && err != papers.ErrCookieNotFound {
 			p.Logger.Print("Error getting refresh token during logout:", err)
 		}
 
-		p.Config.Storage.Client.Remove(p.Config.AccessCookieName, w)
-		p.Config.Storage.Client.Remove(p.Config.RefreshCookieName, w)
+		p.Config.Storage.Cookies.Remove(p.Config.AccessCookieName, w)
+		p.Config.Storage.Cookies.Remove(p.Config.RefreshCookieName, w)
 
 		if err := actions.Logout(r.Context(), p, user.GetID(), accessToken, refreshToken); err != nil {
 			p.Logger.Print("Error invalidating tokens for logout:", err)

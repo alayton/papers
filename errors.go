@@ -8,9 +8,10 @@ func (e ConstError) Error() string {
 
 const (
 	// Startup errors
-	ErrNoUserStorage   = ConstError("No UserStorage defined")
-	ErrNoTokenStorage  = ConstError("No TokenStorage defined")
-	ErrNoClientStorage = ConstError("No ClientStorage defined")
+	ErrNoUserStorage    = ConstError("No UserStorage defined")
+	ErrNoTokenStorage   = ConstError("No TokenStorage defined")
+	ErrNoClientStorage  = ConstError("No CookieStorage defined")
+	ErrNoSessionStorage = ConstError("No SessionStorage defined")
 
 	// Generic errors
 	ErrStorageError = ConstError("Unexpected storage error")
@@ -23,6 +24,8 @@ const (
 	ErrCookieError       = ConstError("Unexpected cookie error")
 	ErrCookieDecodeError = ConstError("Couldn't decode cookie")
 	ErrCookieEncodeError = ConstError("Couldn't encode cookie")
+	ErrSessionError      = ConstError("Unexpected session error")
+	ErrSessionMissingKey = ConstError("Session doesn't contain this key")
 
 	// Registration errors
 	ErrRegistrationFailed = ConstError("Registration failed")
@@ -37,12 +40,12 @@ const (
 	ErrPasswordError      = ConstError("There was a problem with the password")
 
 	// Login errors
-	ErrPasswordMismatch  = ConstError("Password mismatch")
-	ErrLoginFailed       = ConstError("Login failed")
-	ErrUserLocked        = ConstError("Account is locked")
-	ErrLoginTokenExpired = ConstError("Login attempt took too long")
+	ErrPasswordMismatch = ConstError("Password mismatch")
+	ErrLoginFailed      = ConstError("Login failed")
+	ErrUserLocked       = ConstError("Account is locked")
 
 	// TOTP errors
+	ErrTOTPUnexpected    = ConstError("Unexpected TOTP request")
 	ErrTOTPGenerateError = ConstError("Unexpected TOTP generation error")
 	ErrTOTPAlreadySetup  = ConstError("User already has TOTP setup")
 	ErrTOTPQRError       = ConstError("Failed to create TOTP QR code")

@@ -22,12 +22,6 @@ type Token interface {
 	SetCreatedAt(at time.Time)
 }
 
-type LoginToken struct {
-	Identity   int64     `json:"id"`
-	Expiration time.Time `json:"ex"`
-	Remember   bool      `json:"rm"`
-}
-
 type AccessToken struct {
 	Identity    int64     `json:"id"`
 	Token       string    `json:"to"`
@@ -42,14 +36,6 @@ type RefreshToken struct {
 	Token    string `json:"to"`
 	Chain    string `json:"ch"`
 	Limited  bool   `json:"li"`
-}
-
-func (p *Papers) NewLoginToken(ctx context.Context, userID int64, remember bool) *LoginToken {
-	return &LoginToken{
-		Identity:   userID,
-		Expiration: time.Now().Add(p.Config.LoginExpiration),
-		Remember:   remember,
-	}
 }
 
 func (p *Papers) NewAccessToken(ctx context.Context, userID int64, refresh *RefreshToken) (*AccessToken, error) {

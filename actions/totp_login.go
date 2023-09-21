@@ -14,8 +14,9 @@ import (
 )
 
 type TOTPLoginFields struct {
-	LoginToken *papers.LoginToken
-	Code       string `json:"code"`
+	Code     string `json:"code"`
+	UserID   int64  `json:"-"`
+	Remember bool   `json:"-"`
 }
 
 type TOTPLoginResult struct {
@@ -24,20 +25,16 @@ type TOTPLoginResult struct {
 	RefreshToken *papers.RefreshToken
 }
 
-// Completes authentication of users with a TOTP configured. Caller is responsible for generating access and refresh tokens for the returned User
+// Completes authentication of users with a TOTP configured. Caller is responsible for sending access and refresh tokens to the client
 func TOTPLogin(ctx context.Context, p *papers.Papers, fields TOTPLoginFields) (*TOTPLoginResult, error) {
-	now := time.Now()
-	if now.After(fields.LoginToken.Expiration) {
-		return nil, papers.ErrLoginTokenExpired
-	}
-
-	user, err := p.Config.Storage.Users.GetUserByID(ctx, fields.LoginToken.Identity)
+	user, err := p.Config.Storage.Users.GetUserByID(ctx, fields.UserID)
 	if err == papers.ErrUserNotFound {
 		return nil, err
 	} else if err != nil {
 		return nil, fmt.Errorf("%w: %v", papers.ErrLoginFailed, err)
 	}
 
+	now := time.Now()
 	if now.Before(user.GetLockedUntil()) {
 		return nil, papers.ErrUserLocked
 	}
@@ -86,7 +83,7 @@ func TOTPLogin(ctx context.Context, p *papers.Papers, fields TOTPLoginFields) (*
 	}
 
 	var refreshToken *papers.RefreshToken
-	if fields.LoginToken.Remember {
+	if fields.Remember {
 		refreshToken, err = p.NewRefreshToken(ctx, accessToken)
 		if err != nil {
 			return nil, fmt.Errorf("%w: %v", papers.ErrLoginFailed, err)

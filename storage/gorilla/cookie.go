@@ -1,4 +1,4 @@
-package storage
+package gorilla
 
 import (
 	"fmt"
@@ -10,18 +10,18 @@ import (
 	"github.com/alayton/papers"
 )
 
-// Creates a new ClientCookie instance
+// Creates a new SecureCookie instance
 // hashKey verifies the authenticity of the cookie using HMAC and should be at least 32 bytes (preferably 32 or 64 bytes)
 // blockKey encrypts the cookie using AES-128, AES-192, or AES-256, and must be 16, 24, or 32 bytes respectively. A nil blockKey disables encryption
-func NewClientCookie(hashKey []byte, blockKey []byte) *ClientCookie {
-	return &ClientCookie{
+func NewSecureCookie(hashKey []byte, blockKey []byte) *SecureCookie {
+	return &SecureCookie{
 		cookie:   securecookie.New(hashKey, blockKey),
 		Secure:   true,
 		HttpOnly: true,
 	}
 }
 
-type ClientCookie struct {
+type SecureCookie struct {
 	cookie   *securecookie.SecureCookie
 	Path     string
 	Domain   string
@@ -29,7 +29,7 @@ type ClientCookie struct {
 	HttpOnly bool
 }
 
-func (c ClientCookie) Read(name string, r *http.Request, value interface{}) error {
+func (c SecureCookie) Read(name string, r *http.Request, value interface{}) error {
 	cookie, err := r.Cookie(name)
 	if err == http.ErrNoCookie {
 		return papers.ErrCookieNotFound
@@ -45,7 +45,7 @@ func (c ClientCookie) Read(name string, r *http.Request, value interface{}) erro
 	return nil
 }
 
-func (c ClientCookie) Write(name string, w http.ResponseWriter, maxAge time.Duration, value interface{}) error {
+func (c SecureCookie) Write(name string, w http.ResponseWriter, maxAge time.Duration, value interface{}) error {
 	encoded, err := c.cookie.Encode(name, value)
 	if err != nil {
 		return fmt.Errorf("%w: %v", papers.ErrCookieEncodeError, err)
@@ -65,7 +65,7 @@ func (c ClientCookie) Write(name string, w http.ResponseWriter, maxAge time.Dura
 	return nil
 }
 
-func (c ClientCookie) Remove(name string, w http.ResponseWriter) {
+func (c SecureCookie) Remove(name string, w http.ResponseWriter) {
 	cookie := &http.Cookie{
 		Name:     name,
 		Value:    "",

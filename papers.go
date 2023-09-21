@@ -27,8 +27,11 @@ func (p *Papers) Start(ctx context.Context) error {
 	if p.Config.Storage.Tokens == nil {
 		return ErrNoTokenStorage
 	}
-	if p.Config.Storage.Client == nil {
+	if p.Config.Storage.Cookies == nil {
 		return ErrNoClientStorage
+	}
+	if p.Config.Storage.Session == nil {
+		return ErrNoSessionStorage
 	}
 
 	if p.Config.PruneAccessTokensInterval > 0 {

@@ -14,7 +14,7 @@ func Auth(p *papers.Papers) func(http.Handler) http.Handler {
 			ctx := r.Context()
 
 			var accessToken *papers.AccessToken
-			if err := p.Config.Storage.Client.Read(p.Config.AccessCookieName, r, &accessToken); err != nil && err != papers.ErrCookieNotFound {
+			if err := p.Config.Storage.Cookies.Read(p.Config.AccessCookieName, r, &accessToken); err != nil && err != papers.ErrCookieNotFound {
 				p.Logger.Print("Middleware access cookie error:", err)
 			}
 
@@ -51,7 +51,7 @@ func Auth(p *papers.Papers) func(http.Handler) http.Handler {
 			if accessToken == nil || accessToken.Expiration.Before(time.Now()) {
 				// Access token was not found, expired, or was invalid. Check for a refresh token to generate a new access token
 				var refreshToken *papers.RefreshToken
-				if err := p.Config.Storage.Client.Read(p.Config.RefreshCookieName, r, &refreshToken); err != nil && err != papers.ErrCookieNotFound {
+				if err := p.Config.Storage.Cookies.Read(p.Config.RefreshCookieName, r, &refreshToken); err != nil && err != papers.ErrCookieNotFound {
 					p.Logger.Print("Middleware refresh cookie error:", err)
 				}
 
@@ -83,10 +83,10 @@ func Auth(p *papers.Papers) func(http.Handler) http.Handler {
 					if access, refresh, err := p.NewAccessTokenFromRefreshToken(ctx, refreshToken); err != nil {
 						p.Logger.Print("Middleware access token refresh error:", err)
 					} else {
-						if err := p.Config.Storage.Client.Write(p.Config.AccessCookieName, w, p.Config.AccessExpiration, access); err != nil {
+						if err := p.Config.Storage.Cookies.Write(p.Config.AccessCookieName, w, p.Config.AccessExpiration, access); err != nil {
 							p.Logger.Print("Middleware cookie write error:", err)
 						}
-						if err := p.Config.Storage.Client.Write(p.Config.RefreshCookieName, w, p.Config.RefreshExpiration, refresh); err != nil {
+						if err := p.Config.Storage.Cookies.Write(p.Config.RefreshCookieName, w, p.Config.RefreshExpiration, refresh); err != nil {
 							p.Logger.Print("Middleware cookie write error:", err)
 						}
 						accessToken = access

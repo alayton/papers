@@ -48,7 +48,7 @@ func Register(ctx context.Context, p *papers.Papers, fields RegisterFields) (pap
 		if p.Config.Mailer.Mailer != nil {
 			p.Config.Mailer.Mailer.SendMessage(ctx, p, papers.Message{
 				Type: papers.MessageConfirmation,
-				To:   []papers.Email{papers.Email{Address: fields.Email, Name: fields.Username}},
+				To:   []papers.Email{{Address: fields.Email, Name: fields.Username}},
 				Data: map[string]interface{}{
 					"token": token,
 				},

@@ -43,10 +43,19 @@ type TokenStorage interface {
 	PruneRefreshTokens(ctx context.Context, timeToStale time.Duration) error
 }
 
-type ClientStorage interface {
+type CookieStorage interface {
 	Read(name string, r *http.Request, value interface{}) error
 	Write(name string, w http.ResponseWriter, maxAge time.Duration, value interface{}) error
 	Remove(name string, w http.ResponseWriter)
+}
+
+type SessionStorage interface {
+	Get(r *http.Request, key string) (string, error)
+	Set(r *http.Request, key string, value string) error
+	MultiSet(r *http.Request, vals map[string]string) error
+	Delete(r *http.Request, key string) error
+	MultiDelete(r *http.Request, keys []string) error
+	Write(r *http.Request, w http.ResponseWriter) error
 }
 
 type TTLStorage interface {

@@ -10,7 +10,8 @@ type Config struct {
 	Storage struct {
 		Users      UserStorage
 		Tokens     TokenStorage
-		Client     ClientStorage
+		Cookies    CookieStorage
+		Session    SessionStorage
 		TokenCache TokenCache
 	}
 
@@ -66,8 +67,6 @@ type Config struct {
 	// Name of the refresh token cookie
 	RefreshCookieName string
 
-	// How long until a login token expires (only used when entering a TOTP code to complete a login)
-	LoginExpiration time.Duration
 	// How long until an access token expires
 	AccessExpiration time.Duration
 	// How long until a refresh token expires
@@ -127,7 +126,6 @@ func (p *Papers) SetDefaultConfig() {
 		AccessCookieName:  "access",
 		RefreshCookieName: "refresh",
 
-		LoginExpiration:      time.Minute * 5,
 		AccessExpiration:     time.Minute * 15,
 		RefreshExpiration:    time.Hour * 24 * 30,
 		RecoveryExpiration:   time.Minute * 30,

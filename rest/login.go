@@ -3,6 +3,7 @@ package rest
 import (
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/alayton/papers"
 	"github.com/alayton/papers/actions"
@@ -47,21 +48,27 @@ func Login(p *papers.Papers) http.HandlerFunc {
 		status := http.StatusOK
 
 		if result.NeedsTOTP {
-			if err := p.Config.Storage.Client.Write(p.Config.LoginCookieName, w, p.Config.LoginExpiration, result.LoginToken); err != nil {
+			if err := p.Config.Storage.Session.MultiSet(r, map[string]string{
+				"uid": strconv.FormatInt(result.User.GetID(), 10),
+				"rm":  strconv.FormatBool(result.Remember),
+			}); err != nil {
 				status = http.StatusInternalServerError
-				resp.Error = err.Error()
+				resp.Error = papers.ErrSessionError.Error()
+			} else if err := p.Config.Storage.Session.Write(r, w); err != nil {
+				status = http.StatusInternalServerError
+				resp.Error = papers.ErrSessionError.Error()
 			} else {
 				resp.NeedsTOTP = true
 			}
 		} else {
 			if result.RefreshToken != nil {
-				if err := p.Config.Storage.Client.Write(p.Config.RefreshCookieName, w, p.Config.RefreshExpiration, result.RefreshToken); err != nil {
+				if err := p.Config.Storage.Cookies.Write(p.Config.RefreshCookieName, w, p.Config.RefreshExpiration, result.RefreshToken); err != nil {
 					status = http.StatusInternalServerError
 					resp.Error = err.Error()
 				}
 			}
 
-			if err := p.Config.Storage.Client.Write(p.Config.AccessCookieName, w, p.Config.AccessExpiration, result.AccessToken); err != nil {
+			if err := p.Config.Storage.Cookies.Write(p.Config.AccessCookieName, w, p.Config.AccessExpiration, result.AccessToken); err != nil {
 				status = http.StatusInternalServerError
 				resp.Error = err.Error()
 			} else if status == http.StatusOK {
