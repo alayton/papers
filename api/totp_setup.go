@@ -1,4 +1,4 @@
-package rest
+package api
 
 import (
 	"bytes"
@@ -48,7 +48,7 @@ func TOTPSetup(p *papers.Papers) http.HandlerFunc {
 
 		buf := new(bytes.Buffer)
 		if err := png.Encode(buf, result.QR); err != nil {
-			p.Logger.Print("Failed to encode TOTP QR code:", err)
+			p.Logger.Error("failed to encode TOTP QR code", "error", err)
 			resp.Error = papers.ErrTOTPQRError.Error()
 			w.WriteHeader(http.StatusInternalServerError)
 			writeJSON(w, resp)

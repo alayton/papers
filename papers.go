@@ -2,17 +2,18 @@ package papers
 
 import (
 	"context"
+	"log/slog"
 )
 
 type Papers struct {
 	Config Config
-	Logger Logger
+	Logger *slog.Logger
 	Roles  map[string][]string
 }
 
 func New() *Papers {
 	papers := &Papers{
-		Logger: SystemLogger{},
+		Logger: slog.Default(),
 		Roles:  map[string][]string{},
 	}
 	papers.SetDefaultConfig()

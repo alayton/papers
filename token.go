@@ -103,7 +103,7 @@ func (p *Papers) NewAccessTokenFromRefreshToken(ctx context.Context, refresh *Re
 
 func (p *Papers) pruneAccessTokens(ctx context.Context) {
 	if err := p.Config.Storage.Tokens.PruneAccessTokens(ctx, p.Config.StaleAccessTokensAge); err != nil {
-		p.Logger.Print("PruneAccessTokens error:", err)
+		p.Logger.Error("PruneAccessTokens failed", "error", err)
 	}
 
 	timer := time.NewTimer(p.Config.PruneAccessTokensInterval)
@@ -118,7 +118,7 @@ func (p *Papers) pruneAccessTokens(ctx context.Context) {
 
 func (p *Papers) pruneRefreshTokens(ctx context.Context) {
 	if err := p.Config.Storage.Tokens.PruneRefreshTokens(ctx, p.Config.StaleRefreshTokensAge); err != nil {
-		p.Logger.Print("PruneRefreshTokens error:", err)
+		p.Logger.Error("PruneRefreshTokens failed", "error", err)
 	}
 
 	timer := time.NewTimer(p.Config.PruneRefreshTokensInterval)

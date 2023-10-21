@@ -7,7 +7,7 @@ import (
 func HashPassword(p *Papers, password string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), p.Config.BCryptCost)
 	if err != nil {
-		p.Logger.Print("Error from bcrypt.GenerateFromPassword:", err)
+		p.Logger.Error("error hashing password with bcrypt", "error", err)
 		return "", ErrPasswordError
 	}
 	return string(hash), nil

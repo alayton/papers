@@ -57,7 +57,7 @@ func Register(ctx context.Context, p *papers.Papers, fields RegisterFields) (pap
 	}
 
 	if err := p.Config.Storage.Users.CreateUser(ctx, user); err != nil {
-		p.Logger.Print("Error from CreateUser:", err)
+		p.Logger.Error("failed to create user during registration", "error", err)
 		return nil, errors.Join(fmt.Errorf("%w: problem creating a new user", papers.ErrRegistrationFailed))
 	}
 

@@ -15,7 +15,7 @@ func Auth(p *papers.Papers) func(http.Handler) http.Handler {
 
 			var accessToken *papers.AccessToken
 			if err := p.Config.Storage.Cookies.Read(p.Config.AccessCookieName, r, &accessToken); err != nil && err != papers.ErrCookieNotFound {
-				p.Logger.Print("Middleware access cookie error:", err)
+				p.Logger.Error("failed reading access cookie in auth middleware", "error", err)
 			}
 
 			if accessToken != nil {
@@ -30,7 +30,7 @@ func Auth(p *papers.Papers) func(http.Handler) http.Handler {
 							// Two possibilities: the token wasn't in the database (ErrTokenNotFound), or the query errored
 							if err != papers.ErrTokenNotFound {
 								// Query error, log it, assume it's invalid
-								p.Logger.Print("Middleware access token storage error:", err)
+								p.Logger.Error("failed reading access token in auth middleware", "error", err)
 								accessToken = nil
 							} else {
 								// Token wasn't in the database, whether it's valid or not depends on whether valid access tokens are supposed to be stored
@@ -52,7 +52,7 @@ func Auth(p *papers.Papers) func(http.Handler) http.Handler {
 				// Access token was not found, expired, or was invalid. Check for a refresh token to generate a new access token
 				var refreshToken *papers.RefreshToken
 				if err := p.Config.Storage.Cookies.Read(p.Config.RefreshCookieName, r, &refreshToken); err != nil && err != papers.ErrCookieNotFound {
-					p.Logger.Print("Middleware refresh cookie error:", err)
+					p.Logger.Error("failed reading refresh cookie in auth middleware", "error", err)
 				}
 
 				if refreshToken != nil {
@@ -63,7 +63,7 @@ func Auth(p *papers.Papers) func(http.Handler) http.Handler {
 							// Two possibilities: the token wasn't in the database (ErrTokenNotFound), or the query errored. Either way, we treat it as invalid
 							if err != papers.ErrTokenNotFound {
 								// Query error, log it
-								p.Logger.Print("Middleware refresh token storage error:", err)
+								p.Logger.Error("failed reading refresh token in auth middleware", "error", err)
 							}
 							p.Config.Storage.TokenCache.SetTokenValidity(refreshToken.Token, false)
 							refreshToken = nil
@@ -81,13 +81,13 @@ func Auth(p *papers.Papers) func(http.Handler) http.Handler {
 				if refreshToken != nil {
 					// Token wasn't invalidated, we can use it
 					if access, refresh, err := p.NewAccessTokenFromRefreshToken(ctx, refreshToken); err != nil {
-						p.Logger.Print("Middleware access token refresh error:", err)
+						p.Logger.Error("failed to refresh access token in auth middleware", "error", err)
 					} else {
 						if err := p.Config.Storage.Cookies.Write(p.Config.AccessCookieName, w, p.Config.AccessExpiration, access); err != nil {
-							p.Logger.Print("Middleware cookie write error:", err)
+							p.Logger.Error("failed to write access cookie in auth middleware", "error", err)
 						}
 						if err := p.Config.Storage.Cookies.Write(p.Config.RefreshCookieName, w, p.Config.RefreshExpiration, refresh); err != nil {
-							p.Logger.Print("Middleware cookie write error:", err)
+							p.Logger.Error("failed to write refresh cookie in auth middleware", "error", err)
 						}
 						accessToken = access
 					}
@@ -98,7 +98,7 @@ func Auth(p *papers.Papers) func(http.Handler) http.Handler {
 				// If we still have an access token, it's either valid or been refreshed, so grab the user and store it in context
 				user, err := p.Config.Storage.Users.GetUserByID(ctx, accessToken.Identity)
 				if err != papers.ErrUserNotFound {
-					p.Logger.Print("Middleware user storage error:", err)
+					p.Logger.Error("failed to retrieve user from storage in auth middleware", "error", err)
 				} else if err == nil {
 					r = r.WithContext(context.WithValue(ctx, p.Config.UserContextKey, user))
 				}

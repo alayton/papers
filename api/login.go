@@ -1,4 +1,4 @@
-package rest
+package api
 
 import (
 	"errors"
@@ -10,10 +10,9 @@ import (
 )
 
 type loginResponse struct {
-	NeedsTOTP  bool        `json:"needsTotp,omitempty"`
-	LoginToken string      `json:"loginToken,omitempty"`
-	User       papers.User `json:"user,omitempty"`
-	Error      string      `json:"error,omitempty"`
+	NeedsTOTP bool        `json:"needsTotp,omitempty"`
+	User      papers.User `json:"user,omitempty"`
+	Error     string      `json:"error,omitempty"`
 }
 
 func Login(p *papers.Papers) http.HandlerFunc {

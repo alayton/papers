@@ -60,6 +60,8 @@ type Config struct {
 	// If set, key used to encrypt the TOTP secret before saving it in storage. Must be 16/24/32 bytes for AES-128/AES-192/AES-256 respectively
 	TOTPSecretEncryptionKey string
 
+	OAuth2Providers map[string]OAuth2Provider
+
 	// Name of the login token cookie
 	LoginCookieName string
 	// Name of the access token cookie
@@ -121,6 +123,8 @@ func (p *Papers) SetDefaultConfig() {
 		PasswordRelaxedLength:    20,
 
 		TOTPQRSize: 200,
+
+		OAuth2Providers: map[string]OAuth2Provider{},
 
 		LoginCookieName:   "login",
 		AccessCookieName:  "access",

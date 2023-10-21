@@ -8,8 +8,8 @@
 * ~~2FA support~~
   * https://gigi.nullneuron.net/gigilabs/totp-and-authenticator-apps-for-2fa-in-go/
   * https://github.com/pquerna/otp
-* OAuth2 implementation
-  * Google
+* ~~OAuth2 implementation~~
+  * ~~Google~~
   * Steam?
   * Wargaming
 * ~~Account locking~~

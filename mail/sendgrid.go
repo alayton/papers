@@ -74,7 +74,7 @@ func (s SendgridMailer) Send(ctx context.Context, p *papers.Papers, msg papers.M
 		return fmt.Errorf("%w: %v", papers.ErrMessageFailed, err)
 	} else {
 		if response.StatusCode >= 400 {
-			p.Logger.Print("Unexpected status code from SendGrid API:", response.StatusCode, response.Body)
+			p.Logger.Error("unexpected status code from SendGrid API", "statusCode", response.StatusCode, "body", response.Body)
 		}
 	}
 

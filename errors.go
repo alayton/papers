@@ -51,6 +51,13 @@ const (
 	ErrTOTPQRError       = ConstError("Failed to create TOTP QR code")
 	ErrTOTPMismatch      = ConstError("TOTP code doesn't match")
 
+	// OAuth2 errors
+	ErrOAuth2BadProvider    = ConstError("Invalid OAuth2 provider")
+	ErrOAuth2BadState       = ConstError("Invalid OAuth2 state")
+	ErrOAuth2LoginFailed    = ConstError("OAuth2 login failed")
+	ErrOAuth2ExchangeFailed = ConstError("OAuth2 token exchange failed")
+	ErrOAuth2IdentityFailed = ConstError("Couldn't get OAuth2 identity")
+
 	// Mailer errors
 	ErrMessageFailed     = ConstError("Failed to send email")
 	ErrNoMessageTemplate = ConstError("Missing email template")
