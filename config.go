@@ -27,6 +27,9 @@ type Config struct {
 		Recovery string
 	}
 
+	// Adapter for getting parameters from the current request
+	RouteParams RouteParams
+
 	// Complete root level URL of the application, with no trailing slash, e.g. https://example.com
 	BaseURL string
 	// Name of the application (used when generating TOTP secret)

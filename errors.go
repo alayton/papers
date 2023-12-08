@@ -12,6 +12,7 @@ const (
 	ErrNoTokenStorage   = ConstError("No TokenStorage defined")
 	ErrNoClientStorage  = ConstError("No CookieStorage defined")
 	ErrNoSessionStorage = ConstError("No SessionStorage defined")
+	ErrNoRouteParams    = ConstError("No RouteParams defined")
 
 	// Generic errors
 	ErrStorageError = ConstError("Unexpected storage error")

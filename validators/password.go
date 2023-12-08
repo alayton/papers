@@ -21,7 +21,7 @@ func Password(p *papers.Papers, password string) error {
 
 	length := len(password)
 	if length < p.Config.PasswordMinLength {
-		return fmt.Errorf("%w: must be at least %d characters", papers.ErrInvalidPassword)
+		return fmt.Errorf("%w: must be at least %d characters", papers.ErrInvalidPassword, p.Config.PasswordMinLength)
 	} else if length >= p.Config.PasswordRelaxedLength {
 		return nil
 	}
@@ -35,7 +35,7 @@ func Password(p *papers.Papers, password string) error {
 	} else if p.Config.PasswordRequireNumbers && !number {
 		return fmt.Errorf("%w: must contain at least one number", papers.ErrInvalidPassword)
 	} else if p.Config.PasswordRequireSpecials && !special {
-		return fmt.Errorf("%w: must contain at least one special character (!@#$%^&*+=_-)", papers.ErrInvalidPassword)
+		return fmt.Errorf("%w: must contain at least one special character (!@#$%%^&*+=_-)", papers.ErrInvalidPassword)
 	}
 	return nil
 }

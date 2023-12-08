@@ -7,9 +7,9 @@ import (
 type MessageType string
 
 const (
-	MessageConfirmation   = MessageType("confirmation")
-	MessageForgotPassword = MessageType("forgot_password")
-	MessageLocked         = MessageType("locked")
+	MessageConfirmation = MessageType("confirmation")
+	MessageRecovery     = MessageType("recovery")
+	MessageLocked       = MessageType("locked")
 )
 
 type Email struct {

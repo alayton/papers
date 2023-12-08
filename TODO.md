@@ -11,9 +11,10 @@
 * ~~OAuth2 implementation~~
   * ~~Google~~
   * Steam?
-  * Wargaming
 * ~~Account locking~~
-* Forgot password flow
+* ~~Forgot password flow~~
 * SMTP mailer
 * Roles and permissions
 * Write docs
+* OpenID Connect
+  * Wargaming

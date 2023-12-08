@@ -34,6 +34,9 @@ func (p *Papers) Start(ctx context.Context) error {
 	if p.Config.Storage.Session == nil {
 		return ErrNoSessionStorage
 	}
+	if p.Config.RouteParams == nil {
+		return ErrNoRouteParams
+	}
 
 	if p.Config.PruneAccessTokensInterval > 0 {
 		go p.pruneAccessTokens(ctx)
